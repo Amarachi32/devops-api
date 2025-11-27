@@ -2,7 +2,6 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy ONLY the main project file
 COPY InfinionDevOps.csproj ./
 RUN dotnet restore "InfinionDevOps.csproj"
 
