@@ -17,10 +17,10 @@ jobs:
     
     # Optional: Add a condition to ensure the ACR login server secret is set
     # if: env.ACR_LOGIN_SERVER != '' 
-    permissions:
-      id-token: write
-      contents: read
-      
+    # permissions:
+    #   id-token: write
+    #   contents: read
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
