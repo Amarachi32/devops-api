@@ -5,14 +5,11 @@ on:
     branches:
       - master # Trigger on pushes to the main branch
 
-vars:
-  RESOURCE_GROUP_NAME: amarachiperpetua8gmailcom
-
-
 env:
   ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }} # e.g., devopstestacr1234.azurecr.io
   ACR_REPOSITORY: weather-api
   IMAGE_TAG: ${{ github.sha }} # Use the commit SHA as the unique image tag
+  RESOURCE_GROUP_NAME: amarachiperpetua8gmailcom # Now defined as an environment variable
 
 jobs:
   build-and-push:
@@ -54,7 +51,7 @@ jobs:
       - name: Set AKS Context
         uses: azure/aks-set-context@v3
         with:
-          resource-group: ${{ vars.RESOURCE_GROUP_NAME }}
+          resource-group: ${{ env.RESOURCE_GROUP_NAME }}
           cluster-name: ${{ secrets.AKS_CLUSTER_NAME }}
 
       - name: Deploy to AKS
