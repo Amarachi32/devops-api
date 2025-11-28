@@ -5,6 +5,10 @@ on:
     branches:
       - master # Trigger on pushes to the main branch
 
+vars:
+  RESOURCE_GROUP_NAME: amarachiperpetua8gmailcom
+
+
 env:
   ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }} # e.g., devopstestacr1234.azurecr.io
   ACR_REPOSITORY: weather-api
@@ -39,3 +43,25 @@ jobs:
           # Define the full image tag: <acr-server>/<repo-name>:<tag>
           tags: ${{ env.ACR_LOGIN_SERVER }}/${{ env.ACR_REPOSITORY }}:${{ env.IMAGE_TAG }}
           file: ./Dockerfile
+
+      # --- CONTINUOUS DEPLOYMENT ---
+      - name: Azure Login for AKS
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          enable-AzPSSession: true
+
+      - name: Set AKS Context
+        uses: azure/aks-set-context@v3
+        with:
+          resource-group: ${{ vars.RESOURCE_GROUP_NAME }}
+          cluster-name: ${{ secrets.AKS_CLUSTER_NAME }}
+
+      - name: Deploy to AKS
+        uses: azure/k8s-deploy@v4
+        with:
+          manifests: |
+            k8s/deployment.yaml
+            k8s/service.yaml
+          images: |
+            ${{ env.ACR_LOGIN_SERVER }}/${{ env.ACR_REPOSITORY }}:${{ env.IMAGE_TAG }}
